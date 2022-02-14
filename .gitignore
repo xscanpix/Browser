@@ -1,0 +1,6 @@
+# Project files/directories
+out
+bin 
+
+# IDE-stuff
+.vscode
