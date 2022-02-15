@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
 
-  auto source_file = SN::LibJS::Source("./res/testfile.js");
+  auto source_file = SN::LibJS::Source::from_path("./res/testfile.js");
 
   if (source_file.length() == 0) {
     return -1;
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   SN::LibJS::Token token;
 
   while (true) {
-    auto token = lexer.run();
+    auto token = lexer.next();
 
     std::cout << token << std::endl;
 

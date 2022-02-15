@@ -116,7 +116,7 @@ Lexer::Lexer(Source source)
   }
 }
 
-Token Lexer::run() {
+Token Lexer::next() {
   m_current_state = LexerState::Start;
   m_value = {};
   m_message = {};
@@ -271,7 +271,7 @@ LexerState Lexer::lexIdentifier() {
       m_source.substr(value_start, (m_position - value_start) - 1);
 
   if (auto it = s_keywords.find(identifier); it != s_keywords.end()) {
-    m_value = it->first;
+    m_value = {};
     m_current_type = it->second;
     return LexerState::Start;
   }

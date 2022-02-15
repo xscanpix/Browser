@@ -33,7 +33,7 @@ class Lexer {
 public:
   Lexer(Source source);
 
-  Token run();
+  Token next();
 
 private:
   TokenType m_current_type{TokenType::Invalid};
