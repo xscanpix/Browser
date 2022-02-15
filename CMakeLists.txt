@@ -20,3 +20,26 @@ add_executable(Browser
 target_compile_options(Browser PRIVATE -O3 -std=c++17 -Werror -Wall -Wextra -pedantic-errors -Wsign-conversion -Wconversion)
 
 target_link_libraries(Browser LibBase LibJS)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/ea55f1f52c489535f0d3b583c81529762c9cb5ea.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(
+  hello_test
+  tests/LibJS/TestLexer.cpp
+)
+target_link_libraries(
+  hello_test
+  gtest_main
+  LibJS
+)
+
+include(GoogleTest)
+gtest_discover_tests(hello_test)

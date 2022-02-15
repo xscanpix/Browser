@@ -9,4 +9,5 @@ cmake -S $BROWSER_PROJECT_ROOT -B $BROWSER_PROJECT_ROOT/out/build
 
 cd $BROWSER_PROJECT_ROOT/out/build
 make
+ctest
 cp ./Browser $BROWSER_PROJECT_ROOT/bin
