@@ -1,23 +1,34 @@
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
-#include "LibJS/Source.h"
 #include "LibJS/Lexer.h"
+#include "LibJS/Source.h"
 #include "LibJS/Token.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
+  (void)argc;
+  (void)argv;
+
   auto source_file = SN::LibJS::Source("./res/testfile.js");
+
+  if (source_file.length() == 0) {
+    return -1;
+  }
 
   SN::LibJS::Lexer lexer{source_file};
 
   SN::LibJS::Token token;
 
-  do
-  {
-    token = lexer.next();
-    std::cout << "Type: " << token.name() << " Message: " << token.message() << " Value: " << token.value() << std::endl;
-  } while (token.type() != SN::LibJS::TokenType::Eof && token.type() != SN::LibJS::TokenType::Invalid);
+  while (true) {
+    auto token = lexer.run();
+
+    std::cout << token << std::endl;
+
+    if (token.type() == SN::LibJS::TokenType::Eof ||
+        token.type() == SN::LibJS::TokenType::Invalid) {
+      break;
+    }
+  };
 
   return 0;
 }

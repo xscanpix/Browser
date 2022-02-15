@@ -4,16 +4,16 @@
 es6id: 13.1
 description: >
     finally block let declaration only shadows outer parameter value 1
- ---*/
-
-(try {
+ ---*/try {
   (function (x) {
-    try {
+    try {// asdasd
       let x = 'inner';
-      throw 0;
+      // 123
+      // 123
+      // 123
+      throw 1e1;
     } finally {
       assert.sameValue(x, 'outer');
     }
   })('outer');
-} catch (e) { })
-
+} catch (e) { }

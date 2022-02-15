@@ -17,4 +17,6 @@ add_executable(Browser
   ${BROWSER_SRCS}
 )
 
+target_compile_options(Browser PRIVATE -O3 -std=c++17 -Werror -Wall -Wextra -pedantic-errors -Wsign-conversion -Wconversion)
+
 target_link_libraries(Browser LibBase LibJS)

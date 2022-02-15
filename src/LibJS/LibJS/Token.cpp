@@ -1,6 +1,21 @@
 #include "LibJS/Token.h"
 
 namespace SN::LibJS {
+
+std::ostream &operator<<(std::ostream &os, const Token &token) {
+  os << "Type: '" << token.name() << "'";
+
+  if (token.message() != "") {
+    os << " | Message: '" << token.message() << "'";
+  }
+
+  if (token.value() != "") {
+    os << " | Value: '" << token.value() << "'";
+  }
+
+  return os;
+}
+
 const char *Token::name(TokenType type) {
   switch (type) {
 #define __ENUMERATE_JS_TOKEN(type, category)                                   \

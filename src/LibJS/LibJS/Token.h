@@ -3,33 +3,33 @@
 #include "LibBase/Base.h"
 
 namespace SN::LibJS {
-static constexpr u32 ZERO_WIDTH_NON_JOINER{0x200C};
-static constexpr u32 ZERO_WIDTH_JOINER{0x200D};
-static constexpr u32 ZERO_WIDTH_NO_BREAK_SPACE{0xFEFF};
-static constexpr u32 CHARACTER_TABULATION{0x0009};
-static constexpr u32 LINE_FEED{0x000A};
-static constexpr u32 LINE_TABULATION{0x000B};
-static constexpr u32 FORM_FEED{0x000C};
-static constexpr u32 CARRIAGE_RETURN{0x000D};
-static constexpr u32 LINE_SEPARATOR{0x2028};
-static constexpr u32 PARAGRAPH_SEPARATOR{0x2029};
-static constexpr u32 SPACE{0x0020};
-static constexpr u32 NO_BREAK_SPACE{0x00A0};
-static constexpr u32 ORGHAM_SPACE_MARK{0x1680};
-static constexpr u32 EN_QUAD{0x2000};
-static constexpr u32 EM_QUAD{0x2001};
-static constexpr u32 EN_SPACE{0x2002};
-static constexpr u32 EM_SPACE{0x2003};
-static constexpr u32 THREE_PER_EM_SPACE{0x2004};
-static constexpr u32 FOUR_PER_EM_SPACE{0x2005};
-static constexpr u32 SIX_PER_EM_SPACE{0x2006};
-static constexpr u32 FIGURE_SPACE{0x2007};
-static constexpr u32 PUNCTUATION_SPACE{0x2008};
-static constexpr u32 THIN_SPACE{0x2009};
-static constexpr u32 HAIR_SPACE{0x200A};
-static constexpr u32 NARROW_NO_BREAK_SPACE{0x202F};
-static constexpr u32 MEDIUM_MATHEMATICAL_SPACE{0x205F};
-static constexpr u32 IDEOGRAPHIC_SPACE{0x3000};
+static constexpr uint32_t ZERO_WIDTH_NON_JOINER{0x200C};
+static constexpr uint32_t ZERO_WIDTH_JOINER{0x200D};
+static constexpr uint32_t ZERO_WIDTH_NO_BREAK_SPACE{0xFEFF};
+static constexpr uint32_t CHARACTER_TABULATION{0x0009};
+static constexpr uint32_t LINE_FEED{0x000A};
+static constexpr uint32_t LINE_TABULATION{0x000B};
+static constexpr uint32_t FORM_FEED{0x000C};
+static constexpr uint32_t CARRIAGE_RETURN{0x000D};
+static constexpr uint32_t LINE_SEPARATOR{0x2028};
+static constexpr uint32_t PARAGRAPH_SEPARATOR{0x2029};
+static constexpr uint32_t SPACE{0x0020};
+static constexpr uint32_t NO_BREAK_SPACE{0x00A0};
+static constexpr uint32_t ORGHAM_SPACE_MARK{0x1680};
+static constexpr uint32_t EN_QUAD{0x2000};
+static constexpr uint32_t EM_QUAD{0x2001};
+static constexpr uint32_t EN_SPACE{0x2002};
+static constexpr uint32_t EM_SPACE{0x2003};
+static constexpr uint32_t THREE_PER_EM_SPACE{0x2004};
+static constexpr uint32_t FOUR_PER_EM_SPACE{0x2005};
+static constexpr uint32_t SIX_PER_EM_SPACE{0x2006};
+static constexpr uint32_t FIGURE_SPACE{0x2007};
+static constexpr uint32_t PUNCTUATION_SPACE{0x2008};
+static constexpr uint32_t THIN_SPACE{0x2009};
+static constexpr uint32_t HAIR_SPACE{0x200A};
+static constexpr uint32_t NARROW_NO_BREAK_SPACE{0x202F};
+static constexpr uint32_t MEDIUM_MATHEMATICAL_SPACE{0x205F};
+static constexpr uint32_t IDEOGRAPHIC_SPACE{0x3000};
 
 #define ENUMERATE_JS_TOKENS                                                    \
   __ENUMERATE_JS_TOKEN(Ampersand, Operator)                                    \
@@ -95,6 +95,7 @@ static constexpr u32 IDEOGRAPHIC_SPACE{0x3000};
   __ENUMERATE_JS_TOKEN(LessThan, Operator)                                     \
   __ENUMERATE_JS_TOKEN(LessThanEquals, Operator)                               \
   __ENUMERATE_JS_TOKEN(Let, Keyword)                                           \
+  __ENUMERATE_JS_TOKEN(LineTerminator, LineTerminator)                         \
   __ENUMERATE_JS_TOKEN(Minus, Operator)                                        \
   __ENUMERATE_JS_TOKEN(MinusEquals, Operator)                                  \
   __ENUMERATE_JS_TOKEN(MinusMinus, Operator)                                   \
@@ -162,7 +163,8 @@ enum class TokenCategory {
   Operator,
   Keyword,
   ControlKeyword,
-  Identifier
+  Identifier,
+  LineTerminator,
 };
 
 enum class TokenType {
@@ -177,8 +179,8 @@ public:
   Token(TokenType type, std::string message, std::string value)
       : m_type(type), m_message(message), m_value(value){};
 
-  std::string message() { return m_message; }
-  std::string value() { return m_value; }
+  std::string message() const { return m_message; }
+  std::string value() const { return m_value; }
 
   TokenType type() { return m_type; }
 
@@ -188,9 +190,13 @@ public:
   static TokenCategory category(TokenType);
   TokenCategory category() const;
 
+  friend std::ostream &operator<<(std::ostream &os, const Token &dt);
+
 private:
   TokenType m_type{TokenType::Invalid};
   std::string m_message;
   std::string m_value;
 };
+
+std::ostream &operator<<(std::ostream &os, const Token &token);
 } // namespace SN::LibJS

@@ -1,7 +1,7 @@
 project(LibJS)
 
 set(LIBJS_INCLUDE_DIRECTORY
-  "."
+  .
 )
 
 set(LIBJS_SRCS
