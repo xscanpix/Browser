@@ -1,6 +1,8 @@
 # Project files/directories
 out
 bin 
+cmake-build-debug
 
 # IDE-stuff
 .vscode
+.idea
