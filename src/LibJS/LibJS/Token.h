@@ -176,6 +176,8 @@ enum class TokenType {
 class Token {
 public:
   Token() = default;
+  Token(TokenType type) : m_type(type) {};
+  Token(TokenType type, std::string value) : m_type(type), m_value(std::move(value)) {};
   Token(TokenType type, std::string message, std::string value)
       : m_type(type), m_message(std::move(message)),
         m_value(std::move(value)){};
@@ -183,7 +185,7 @@ public:
   [[nodiscard]] std::string message() const { return m_message; }
   [[nodiscard]] std::string value() const { return m_value; }
 
-  TokenType type() { return m_type; }
+  [[nodiscard]] TokenType type() const { return m_type; }
 
   static const char *name(TokenType);
   [[nodiscard]] const char *name() const;

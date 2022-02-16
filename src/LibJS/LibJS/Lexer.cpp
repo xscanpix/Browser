@@ -175,8 +175,6 @@ Token Lexer::next() {
 } // namespace SN::LibJS
 
 LexerState Lexer::lexStart() {
-  m_value_start = m_position - 1;
-
   while (true) {
     if (is_line_terminator()) {
       do {
@@ -196,6 +194,8 @@ LexerState Lexer::lexStart() {
       break;
     }
   }
+
+  m_value_start = m_position - 1;
 
   if (is_valid_identifier_start()) {
     return LexerState::Identifier;
@@ -392,8 +392,6 @@ LexerState Lexer::lexNumericLiteral() {
 LexerState Lexer::lexStringLiteral() {
   char m_string_literal_stop_char = m_current_char;
 
-  size_t start_string_literal = m_position;
-
   consume();
 
   while (!is_eof() && m_current_char != m_string_literal_stop_char &&
@@ -407,8 +405,8 @@ LexerState Lexer::lexStringLiteral() {
     consume();
   }
 
-  auto string_literal = m_source.substr(
-      start_string_literal, (m_position - start_string_literal) - 1);
+  auto string_literal =
+      m_source.substr(m_value_start + 1, (m_position - m_value_start) - 2);
 
   if (m_current_char != m_string_literal_stop_char) {
     m_current_type = TokenType::UnterminatedStringLiteral;
