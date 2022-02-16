@@ -31,7 +31,7 @@ enum class LexerState {
 
 class Lexer {
 public:
-  explicit Lexer(Source const & source);
+  explicit Lexer(Source const &source);
 
   Token next();
 

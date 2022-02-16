@@ -331,7 +331,8 @@ LexerState Lexer::lexNumericLiteral() {
 
       if (is_eof()) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
+        m_value =
+            m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal with exponent.";
         return LexerState::Invalid;
       }
@@ -351,7 +352,8 @@ LexerState Lexer::lexNumericLiteral() {
 
       if (!is_ascii_digit(m_current_char)) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
+        m_value =
+            m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal: No a digit after exponent.";
         return LexerState::Invalid;
       }
@@ -373,7 +375,8 @@ LexerState Lexer::lexNumericLiteral() {
       consume();
       if (has_exponent || has_period) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
+        m_value =
+            m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal.";
         return LexerState::Invalid;
       }

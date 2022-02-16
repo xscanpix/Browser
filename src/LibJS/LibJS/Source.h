@@ -5,14 +5,16 @@
 namespace SN::LibJS {
 class Source {
 public:
-  Source(const std::string source_text);
+  Source();
+  explicit Source(std::string const &source_text);
 
-  static Source from_path(const std::string source_path);
-  static Source from_text(const std::string source_text);
+  static Source from_path(std::string const &source_path);
+  static Source from_text(std::string const &source_text);
 
-  uint32_t length() const { return m_length; };
+  [[nodiscard]] uint32_t length() const { return m_length; };
 
-  std::string substr(size_t start, size_t n) const {
+  [[nodiscard]] std::string substr(const size_t start,
+                                          const size_t n) const {
     return m_source_text.substr(start, n);
   }
 
