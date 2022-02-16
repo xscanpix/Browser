@@ -1,7 +1,9 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
-#include <assert.h>
+#include <cassert>
+#include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <string>

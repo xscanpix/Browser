@@ -1,12 +1,9 @@
 #include "LibJS/Lexer.h"
 
 #include <algorithm>
-#include <assert.h>
-#include <iomanip>
-#include <iostream>
 
 namespace SN::LibJS {
-Lexer::Lexer(Source source)
+Lexer::Lexer(Source const &source)
     : m_source(source), m_current_char(source[0]),
       m_hit_invalid_unicode_character(source.length() + 1) {
   if (s_keywords.empty()) {
@@ -117,12 +114,11 @@ Lexer::Lexer(Source source)
 }
 
 Token Lexer::next() {
-  m_current_state = LexerState::Start;
   m_value = {};
   m_message = {};
 
   do {
-    if (is_eof()) {
+    if (m_position > m_source.length()) {
       m_current_type = TokenType::Eof;
       m_current_state = LexerState::Eof;
     }
@@ -139,7 +135,8 @@ Token Lexer::next() {
       break;
     }
     case LexerState::LineTerminator: {
-      return {m_current_type, "", ""};
+      m_current_state = LexerState::Start;
+      break;
     }
     case LexerState::SingleLineComment: {
       m_current_state = lexSingleLineComment();
@@ -178,6 +175,8 @@ Token Lexer::next() {
 } // namespace SN::LibJS
 
 LexerState Lexer::lexStart() {
+  m_value_start = m_position - 1;
+
   while (true) {
     if (is_line_terminator()) {
       do {
@@ -261,14 +260,12 @@ LexerState Lexer::lexMultiLineComment() {
 LexerState Lexer::lexIdentifier() {
   m_current_type = TokenType::Identifier;
 
-  size_t value_start = m_position - 1;
-
   do {
     consume();
   } while (is_valid_identifier_part());
 
   auto identifier =
-      m_source.substr(value_start, (m_position - value_start) - 1);
+      m_source.substr(m_value_start, (m_position - m_value_start) - 1);
 
   if (auto it = s_keywords.find(identifier); it != s_keywords.end()) {
     m_value = {};
@@ -284,8 +281,6 @@ LexerState Lexer::lexIdentifier() {
 LexerState Lexer::lexNumericLiteral() {
   m_current_type = TokenType::NumericLiteral;
 
-  size_t value_start = m_position - 1;
-
   bool has_exponent{false};
   bool has_period{false};
 
@@ -294,7 +289,7 @@ LexerState Lexer::lexNumericLiteral() {
 
     m_current_type = TokenType::Invalid;
     m_message = "Unhandled";
-    m_value = m_source.substr(value_start, (m_position - value_start) - 1);
+    m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
     return LexerState::Invalid;
   } else {
     consume();
@@ -336,7 +331,7 @@ LexerState Lexer::lexNumericLiteral() {
 
       if (is_eof()) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(value_start, (m_position - value_start) - 1);
+        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal with exponent.";
         return LexerState::Invalid;
       }
@@ -347,7 +342,7 @@ LexerState Lexer::lexNumericLiteral() {
         if (is_eof()) {
           m_current_type = TokenType::Invalid;
           m_value =
-              m_source.substr(value_start, (m_position - value_start) - 1);
+              m_source.substr(m_value_start, (m_position - m_value_start) - 1);
           m_message =
               "Malformed numeric literal: Explicit sign after exponent.";
           return LexerState::Invalid;
@@ -356,7 +351,7 @@ LexerState Lexer::lexNumericLiteral() {
 
       if (!is_ascii_digit(m_current_char)) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(value_start, (m_position - value_start) - 1);
+        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal: No a digit after exponent.";
         return LexerState::Invalid;
       }
@@ -378,7 +373,7 @@ LexerState Lexer::lexNumericLiteral() {
       consume();
       if (has_exponent || has_period) {
         m_current_type = TokenType::Invalid;
-        m_value = m_source.substr(value_start, (m_position - value_start) - 1);
+        m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
         m_message = "Malformed numeric literal.";
         return LexerState::Invalid;
       }
@@ -386,7 +381,7 @@ LexerState Lexer::lexNumericLiteral() {
       m_current_type = TokenType::BigIntLiteral;
     }
 
-    m_value = m_source.substr(value_start, (m_position - value_start) - 1);
+    m_value = m_source.substr(m_value_start, (m_position - m_value_start) - 1);
     return LexerState::Start;
   }
 }
@@ -426,8 +421,6 @@ LexerState Lexer::lexStringLiteral() {
 }
 
 LexerState Lexer::lexOperand() {
-  size_t value_start = m_position - 1;
-
   if (match('>', '>', '>', '=')) {
     consume();
     consume();
@@ -466,7 +459,7 @@ LexerState Lexer::lexOperand() {
   }
 
   m_message = "Unhandled";
-  m_value = m_source.substr(value_start, m_position - value_start);
+  m_value = m_source.substr(m_value_start, m_position - m_value_start);
   m_current_type = TokenType::Invalid;
   return LexerState::Invalid;
 }
@@ -534,18 +527,18 @@ void Lexer::consume() {
   m_current_char = m_source[m_position++];
 }
 
-bool Lexer::is_numeric_literal_start() {
+bool Lexer::is_numeric_literal_start() const {
 
   return is_ascii_digit(m_current_char) ||
          (match('.') && m_position < m_source.length() &&
-          is_ascii_digit(m_position));
+          is_ascii_digit(m_source[m_position]));
 }
 
-bool Lexer::is_unicode_character() {
+bool Lexer::is_unicode_character() const {
   return (m_current_char & 0b10000000) != 0;
 }
 
-uint32_t Lexer::current_code_point() {
+uint32_t Lexer::current_code_point() const {
   static constexpr uint32_t REPLACEMENT_CHARACTER = 0xFFFD;
 
   if (m_position == 0) {
@@ -559,8 +552,8 @@ uint32_t Lexer::current_code_point() {
 
   // Unicode 2 bytes
   if ((m_current_char & 0b00100000) == 0) {
-    char c1_bits = m_current_char & 0b11111;
-    char c2_bits = m_source[m_position] & 0b111111;
+    uint8_t c1_bits = m_current_char & 0b11111;
+    uint8_t c2_bits = m_source[m_position] & 0b111111;
 
     return (static_cast<uint32_t>(c1_bits) << 6 |
             static_cast<uint32_t>(c2_bits));
@@ -568,9 +561,9 @@ uint32_t Lexer::current_code_point() {
 
   // Unicode 3 bytes
   if ((m_current_char & 0b00010000) == 0) {
-    char c1_bits = m_current_char & 0b11111;
-    char c2_bits = m_source[m_position] & 0b111111;
-    char c3_bits = m_source[m_position + 1] & 0b111111;
+    uint8_t c1_bits = m_current_char & 0b11111;
+    uint8_t c2_bits = m_source[m_position] & 0b111111;
+    uint8_t c3_bits = m_source[m_position + 1] & 0b111111;
 
     return (static_cast<uint32_t>(c1_bits) << 12 |
             static_cast<uint32_t>(c2_bits) << 6 |
@@ -579,10 +572,10 @@ uint32_t Lexer::current_code_point() {
 
   // Unicode 4 bytes
   if ((m_current_char & 0b00001000) == 0) {
-    char c1_bits = m_current_char & 0b11111;
-    char c2_bits = m_source[m_position] & 0b111111;
-    char c3_bits = m_source[m_position + 1] & 0b111111;
-    char c4_bits = m_source[m_position + 2] & 0b111111;
+    uint8_t c1_bits = m_current_char & 0b11111;
+    uint8_t c2_bits = m_source[m_position] & 0b111111;
+    uint8_t c3_bits = m_source[m_position + 1] & 0b111111;
+    uint8_t c4_bits = m_source[m_position + 2] & 0b111111;
 
     return (static_cast<uint32_t>(c1_bits) << 18 |
             static_cast<uint32_t>(c2_bits) << 12 |
@@ -603,7 +596,7 @@ bool Lexer::is_eof() {
   return true;
 }
 
-bool Lexer::is_whitespace() {
+bool Lexer::is_whitespace() const {
   if (m_current_char == SPACE || m_current_char == CHARACTER_TABULATION ||
       m_current_char == LINE_TABULATION || m_current_char == FORM_FEED) {
     return true;
@@ -622,19 +615,19 @@ bool Lexer::is_whitespace() {
   return false;
 }
 
-bool Lexer::is_valid_identifier_start() {
+bool Lexer::is_valid_identifier_start() const {
   return is_ascii_letter(m_current_char) || m_current_char == '$' ||
          m_current_char == '_';
 }
 
-bool Lexer::is_valid_identifier_part() {
+bool Lexer::is_valid_identifier_part() const {
   return is_ascii_letter(m_current_char) || is_ascii_digit(m_current_char) ||
          m_current_char == '$' ||
          (current_code_point() == ZERO_WIDTH_NON_JOINER) ||
          (current_code_point() == ZERO_WIDTH_JOINER);
 }
 
-bool Lexer::is_line_terminator() {
+bool Lexer::is_line_terminator() const {
   if (m_current_char == LINE_FEED || m_current_char == CARRIAGE_RETURN) {
     return true;
   }
@@ -652,9 +645,9 @@ bool Lexer::is_line_terminator() {
   return false;
 }
 
-bool Lexer::match(char a) { return m_current_char == a; }
+bool Lexer::match(char a) const { return m_current_char == a; }
 
-bool Lexer::match(char a, char b) {
+bool Lexer::match(char a, char b) const {
   if (m_position >= m_source.length()) {
     return false;
   }
@@ -662,7 +655,7 @@ bool Lexer::match(char a, char b) {
   return m_current_char == a && m_source[m_position] == b;
 }
 
-bool Lexer::match(char a, char b, char c) {
+bool Lexer::match(char a, char b, char c) const {
   if ((m_position + 1) >= m_source.length()) {
     return false;
   }
@@ -671,7 +664,7 @@ bool Lexer::match(char a, char b, char c) {
          m_source[m_position + 1] == c;
 }
 
-bool Lexer::match(char a, char b, char c, char d) {
+bool Lexer::match(char a, char b, char c, char d) const {
   if ((m_position + 2) >= m_source.length()) {
     return false;
   }

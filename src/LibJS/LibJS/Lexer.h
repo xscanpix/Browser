@@ -31,7 +31,7 @@ enum class LexerState {
 
 class Lexer {
 public:
-  Lexer(Source source);
+  explicit Lexer(Source const & source);
 
   Token next();
 
@@ -50,23 +50,23 @@ private:
   void consume();
 
   bool is_eof();
-  bool is_unicode_character();
-  bool is_whitespace();
-  bool is_line_terminator();
+  bool is_unicode_character() const;
+  bool is_whitespace() const;
+  bool is_line_terminator() const;
 
-  bool is_valid_identifier_start();
-  bool is_valid_identifier_part();
-  bool is_numeric_literal_start();
+  bool is_valid_identifier_start() const;
+  bool is_valid_identifier_part() const;
+  bool is_numeric_literal_start() const;
 
-  bool match(char a);
-  bool match(char a, char b);
-  bool match(char a, char b, char c);
-  bool match(char a, char b, char c, char d);
+  bool match(char a) const;
+  bool match(char a, char b) const;
+  [[maybe_unused]] bool match(char a, char b, char c) const;
+  bool match(char a, char b, char c, char d) const;
 
   template <typename Callback>
   bool match_numerical_literal_separator_followed_by(Callback callback) const;
 
-  uint32_t current_code_point();
+  uint32_t current_code_point() const;
 
   Source m_source;
   char m_current_char;
@@ -78,7 +78,6 @@ private:
   std::string m_value{};
 
   bool m_unterminated_comment{false};
-  bool m_malformed_value{false};
   size_t m_hit_invalid_unicode_character;
 
   size_t m_line_number{1};
