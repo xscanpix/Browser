@@ -17,8 +17,6 @@ int main(int argc, char **argv) {
 
   SN::LibJS::Lexer lexer{source_file};
 
-  SN::LibJS::Token token;
-
   while (true) {
     auto token = lexer.next();
 

@@ -177,20 +177,21 @@ class Token {
 public:
   Token() = default;
   Token(TokenType type, std::string message, std::string value)
-      : m_type(type), m_message(message), m_value(value){};
+      : m_type(type), m_message(std::move(message)),
+        m_value(std::move(value)){};
 
-  std::string message() const { return m_message; }
-  std::string value() const { return m_value; }
+  [[nodiscard]] std::string message() const { return m_message; }
+  [[nodiscard]] std::string value() const { return m_value; }
 
   TokenType type() { return m_type; }
 
   static const char *name(TokenType);
-  const char *name() const;
+  [[nodiscard]] const char *name() const;
 
   static TokenCategory category(TokenType);
-  TokenCategory category() const;
+  [[nodiscard]] TokenCategory category() const;
 
-  friend std::ostream &operator<<(std::ostream &os, const Token &dt);
+  friend std::ostream &operator<<(std::ostream &os, const Token &token);
 
 private:
   TokenType m_type{TokenType::Invalid};
