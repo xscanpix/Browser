@@ -1,6 +1,6 @@
 #include "LibJS/Token.h"
 
-namespace SN::LibJS {
+namespace LibJS {
 
 std::ostream &operator<<(std::ostream &os, const Token &token) {
   os << "Type: '" << token.name() << "'";
@@ -43,4 +43,4 @@ TokenCategory Token::category(TokenType type) {
 }
 
 TokenCategory Token::category() const { return category(m_type); }
-} // namespace SN::LibJS
+} // namespace LibJS

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace SN::LibJS {
+namespace LibJS {
 Source::Source() : m_length(0) {}
 
 Source::Source(std::string const &source_text)
@@ -31,4 +31,4 @@ Source Source::from_path(std::string const &source_path) {
 Source Source::from_text(std::string const &source_text) {
   return Source(source_text);
 }
-} // namespace SN::LibJS
+} // namespace LibJS

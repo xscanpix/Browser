@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace SN::LibJS {
+namespace LibJS {
 Lexer::Lexer(Source const &source)
     : m_source(source), m_current_char(source[0]),
       m_hit_invalid_unicode_character(source.length() + 1) {
@@ -673,4 +673,4 @@ bool Lexer::match(char a, char b, char c, char d) const {
   return m_current_char == a && m_source[m_position] == b &&
          m_source[m_position + 1] == c && m_source[m_position + 2] == d;
 }
-} // namespace SN::LibJS
+} // namespace LibJS

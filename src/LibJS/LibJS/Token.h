@@ -2,7 +2,7 @@
 
 #include "LibBase/Base.h"
 
-namespace SN::LibJS {
+namespace LibJS {
 static constexpr uint32_t ZERO_WIDTH_NON_JOINER{0x200C};
 static constexpr uint32_t ZERO_WIDTH_JOINER{0x200D};
 static constexpr uint32_t ZERO_WIDTH_NO_BREAK_SPACE{0xFEFF};
@@ -202,4 +202,4 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &os, const Token &token);
-} // namespace SN::LibJS
+} // namespace LibJS

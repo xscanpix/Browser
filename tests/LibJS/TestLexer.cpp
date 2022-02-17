@@ -11,10 +11,10 @@ using ::testing::TestInfo;
 using ::testing::TestPartResult;
 using ::testing::UnitTest;
 
-using SN::LibJS::Lexer;
-using SN::LibJS::Source;
-using SN::LibJS::Token;
-using SN::LibJS::TokenType;
+using LibJS::Lexer;
+using LibJS::Source;
+using LibJS::Token;
+using LibJS::TokenType;
 
 static bool tokens_eq(Token const &first, Token const &second) {
   return (first.type() == second.type()) && (first.value() == second.value());

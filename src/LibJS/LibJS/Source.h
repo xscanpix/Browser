@@ -2,7 +2,7 @@
 
 #include "LibBase/Base.h"
 
-namespace SN::LibJS {
+namespace LibJS {
 class Source {
 public:
   Source();
@@ -28,4 +28,4 @@ private:
   const std::string m_source_text;
   const uint32_t m_length;
 };
-} // namespace SN::LibJS
+} // namespace LibJS

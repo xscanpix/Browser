@@ -10,7 +10,7 @@
 #include "LibJS/Source.h"
 #include "LibJS/Token.h"
 
-namespace SN::LibJS {
+namespace LibJS {
 constexpr bool is_ascii_digit(char c) { return c >= '0' && c <= '9'; }
 constexpr bool is_ascii_letter(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
@@ -88,4 +88,4 @@ private:
   std::unordered_map<std::string, TokenType> s_two_char_tokens{};
   std::unordered_map<std::string, TokenType> s_three_char_tokens{};
 };
-} // namespace SN::LibJS
+} // namespace LibJS
