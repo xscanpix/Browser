@@ -17,14 +17,6 @@ add_library(LibJS SHARED
   ${LIBJS_SRCS}
 )
 
-set_target_properties(LibJS
-  PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-    LINKER_LANGUAGE CXX
-)
-
 target_link_libraries(LibJS LibBase)
 
 target_include_directories(LibJS PUBLIC
