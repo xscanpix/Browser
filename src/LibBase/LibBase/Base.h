@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+#include <memory>
 #include <cassert>
 #include <iomanip>
 #include <iostream>
